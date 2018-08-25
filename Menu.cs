@@ -27,9 +27,9 @@ namespace hhax
             StartCoroutine(UpdateNetworkView());
             //
             StartCoroutine(UpdatePlayers());
-            StartCoroutine(UpdateResouceNodes());
             StartCoroutine(UpdateAnimals());
-            StartCoroutine(UpdateUsableItems());
+            //StartCoroutine(UpdateResouceNodes());
+            //StartCoroutine(UpdateUsableItems());
             BaseSettings.GetSettings.IsDebug = true;
         }
 
@@ -125,14 +125,14 @@ namespace hhax
                 {
                     //if (BaseSettings.GetSettings.EspSettings.DrawPlayers && Players != null)
                     //    DrawPlayers();
-                    if (BaseSettings.GetSettings.EspSettings.DrawResouces && ResourceNodes != null)
-                        DrawResouces();
-                    if (BaseSettings.GetSettings.EspSettings.DrawAnimals && Animals != null)
-                        DrawAnimals();
-                    if (BaseSettings.GetSettings.EspSettings.DrawLootCrates && UsableItems != null)
-                        DrawCrates();
-                    if (BaseSettings.GetSettings.EspSettings.DrawLootCrates && UsableItems != null)
-                        DrawWrecks();
+                    //if (BaseSettings.GetSettings.EspSettings.DrawResouces && ResourceNodes != null)
+                    //    DrawResouces();
+                    //if (BaseSettings.GetSettings.EspSettings.DrawAnimals && Animals != null)
+                    //    DrawAnimals();
+                    //if (BaseSettings.GetSettings.EspSettings.DrawLootCrates && UsableItems != null)
+                    //    DrawCrates();
+                    //if (BaseSettings.GetSettings.EspSettings.DrawLootCrates && UsableItems != null)
+                    //    DrawWrecks();
                     if (BaseSettings.GetSettings.EspSettings.DrawOwnershipStakes && NetworkView != null)
                         DrawChunkNetworkView("OwnershipStake");
                     if (BaseSettings.GetSettings.EspSettings.DrawWrecks && NetworkView != null)
@@ -362,33 +362,33 @@ namespace hhax
             }
         }
 
-        public IEnumerator UpdateUsableItems()
-        {
-            if (BaseSettings.GetSettings.IsDebug)
-                Debug.Log("UpdateUsableItems is running");
-            while (true)
-            {
-                try
-                {
-                    if (BaseSettings.GetSettings.EspSettings.IsEnabled && (BaseSettings.GetSettings.EspSettings.DrawLootCrates || BaseSettings.GetSettings.EspSettings.DrawWrecks || BaseSettings.GetSettings.EspSettings.DrawOwnershipStakes))
-                    {
-                        UsableItems = FindObjectsOfType<GenericDeviceUsableInterfaceClient>();
+        //public IEnumerator UpdateUsableItems()
+        //{
+        //    if (BaseSettings.GetSettings.IsDebug)
+        //        Debug.Log("UpdateUsableItems is running");
+        //    while (true)
+        //    {
+        //        try
+        //        {
+        //            if (BaseSettings.GetSettings.EspSettings.IsEnabled && (BaseSettings.GetSettings.EspSettings.DrawLootCrates || BaseSettings.GetSettings.EspSettings.DrawWrecks || BaseSettings.GetSettings.EspSettings.DrawOwnershipStakes))
+        //            {
+        //                UsableItems = FindObjectsOfType<GenericDeviceUsableInterfaceClient>();
 
-                        if (BaseSettings.GetSettings.EspSettings.DrawLootCrates)
-                            UpdateCrates();
-                        if (BaseSettings.GetSettings.EspSettings.DrawWrecks)
-                            FindWrecks();
-                        if (BaseSettings.GetSettings.EspSettings.DrawOwnershipStakes)
-                            FindStakes();
-                    }
-                }
-                catch (Exception e)
-                {
-                    Debug.LogError("Exception in UpdateUsableItems! " + e);
-                }
-                yield return new WaitForSeconds(5f);
-            }
-        }
+        //                if (BaseSettings.GetSettings.EspSettings.DrawLootCrates)
+        //                    UpdateCrates();
+        //                if (BaseSettings.GetSettings.EspSettings.DrawWrecks)
+        //                    FindWrecks();
+        //                if (BaseSettings.GetSettings.EspSettings.DrawOwnershipStakes)
+        //                    FindStakes();
+        //            }
+        //        }
+        //        catch (Exception e)
+        //        {
+        //            Debug.LogError("Exception in UpdateUsableItems! " + e);
+        //        }
+        //        yield return new WaitForSeconds(5f);
+        //    }
+        //}
 
         public IEnumerator UpdateAnimals()
         {
@@ -410,160 +410,160 @@ namespace hhax
             }
         }
 
-        public IEnumerator UpdateResouceNodes()
-        {
-            if (BaseSettings.GetSettings.IsDebug)
-                Debug.Log("UpdateResouceNodes is running");
-            while (true)
-            {
-                try
-                {
-                    if (BaseSettings.GetSettings.EspSettings.IsEnabled && BaseSettings.GetSettings.EspSettings.DrawResouces)
-                        ResourceNodes = FindObjectsOfType<DestroyInTime>();
-                }
-                catch (Exception e)
-                {
-                    Debug.LogError("Exception in UpdateResouceNodes! " + e);
-                }
-                yield return new WaitForSeconds(5f);
-            }
-        }
+        //public IEnumerator UpdateResouceNodes()
+        //{
+        //    if (BaseSettings.GetSettings.IsDebug)
+        //        Debug.Log("UpdateResouceNodes is running");
+        //    while (true)
+        //    {
+        //        try
+        //        {
+        //            if (BaseSettings.GetSettings.EspSettings.IsEnabled && BaseSettings.GetSettings.EspSettings.DrawResouces)
+        //                ResourceNodes = FindObjectsOfType<DestroyInTime>();
+        //        }
+        //        catch (Exception e)
+        //        {
+        //            Debug.LogError("Exception in UpdateResouceNodes! " + e);
+        //        }
+        //        yield return new WaitForSeconds(5f);
+        //    }
+        //}
 
         #endregion
 
         #region Draw
 
-        private void DrawPlayers()
-        {
-            foreach (var playerProxy in Players)
-                try
-                {
-                    if (playerProxy == null)
-                        continue;
-                    var distance = Vector3.Distance(ManagerPlayerOwner.transform.position, playerProxy.transform.position);
+        //private void DrawPlayers()
+        //{
+        //    foreach (var playerProxy in Players)
+        //        try
+        //        {
+        //            if (playerProxy == null)
+        //                continue;
+        //            var distance = Vector3.Distance(ManagerPlayerOwner.transform.position, playerProxy.transform.position);
 
-                    if (distance > BaseSettings.GetSettings.EspSettings.Range)
-                        continue;
+        //            if (distance > BaseSettings.GetSettings.EspSettings.Range)
+        //                continue;
 
-                    var wtsPlayer = Camera.main.WorldToScreenPoint(playerProxy.transform.position);
-                    if (wtsPlayer.z < 0.0)
-                        continue;
+        //            var wtsPlayer = Camera.main.WorldToScreenPoint(playerProxy.transform.position);
+        //            if (wtsPlayer.z < 0.0)
+        //                continue;
 
-                    var nameProxy = playerProxy.GetComponent<DisplayProxyName>();
-                    var description = $"{nameProxy.Name} [{Math.Round(distance)}m]";
+        //            var nameProxy = playerProxy.GetComponent<DisplayProxyName>();
+        //            var description = $"{nameProxy.Name} [{Math.Round(distance)}m]";
 
-                    var color = BaseSettings.GetSettings.Friends.Exists(s => s.Equals(nameProxy.Name)) ? Color.green : Color.red;
+        //            var color = BaseSettings.GetSettings.Friends.Exists(s => s.Equals(nameProxy.Name)) ? Color.green : Color.red;
 
 
-                    var height = (Target.GetBone(EHitboxItem.Head).transform.position - Target.GetBone(EHitboxItem.LeftFoot).transform.position).x;
-                    var width = height / 2.6f;
+        //            var height = (Target.GetBone(EHitboxItem.Head).transform.position - Target.GetBone(EHitboxItem.LeftFoot).transform.position).x;
+        //            var width = height / 2.6f;
 
-                    Drawing.DrawString(new Vector2(wtsPlayer.x, Screen.height - wtsPlayer.y), color, Drawing.TextFlags.TEXT_FLAG_CENTERED, description);
-                    Drawing.DrawBoxOutlines(new Vector2(wtsPlayer.x, Screen.height - wtsPlayer.y), new Vector2(height, width), 1f, color);
-                }
-                catch (Exception e)
-                {
-                    Debug.LogWarning(e);
-                }
-        }
+        //            Drawing.DrawString(new Vector2(wtsPlayer.x, Screen.height - wtsPlayer.y), color, Drawing.TextFlags.TEXT_FLAG_CENTERED, description);
+        //            Drawing.DrawBoxOutlines(new Vector2(wtsPlayer.x, Screen.height - wtsPlayer.y), new Vector2(height, width), 1f, color);
+        //        }
+        //        catch (Exception e)
+        //        {
+        //            Debug.LogWarning(e);
+        //        }
+        //}
 
-        private void DrawAnimals()
-        {
-            foreach (var animal in Animals)
-                try
-                {
-                    if (animal == null)
-                        continue;
+        //private void DrawAnimals()
+        //{
+        //    foreach (var animal in Animals)
+        //        try
+        //        {
+        //            if (animal == null)
+        //                continue;
 
-                    var distance = Vector3.Distance(ManagerPlayerOwner.transform.position, animal.transform.position);
+        //            var distance = Vector3.Distance(ManagerPlayerOwner.transform.position, animal.transform.position);
 
-                    if (distance > BaseSettings.GetSettings.EspSettings.Range)
-                        continue;
+        //            if (distance > BaseSettings.GetSettings.EspSettings.Range)
+        //                continue;
 
-                    var wtsPlayer = Camera.main.WorldToScreenPoint(animal.transform.position);
-                    if (wtsPlayer.z < 0.0)
-                        continue;
+        //            var wtsPlayer = Camera.main.WorldToScreenPoint(animal.transform.position);
+        //            if (wtsPlayer.z < 0.0)
+        //                continue;
 
-                    Drawing.DrawString(new Vector2(wtsPlayer.x, Screen.height - wtsPlayer.y), Color.magenta, Drawing.TextFlags.TEXT_FLAG_CENTERED, $"{animal.name} [{Math.Round(distance)}m]");
-                }
-                catch (Exception e)
-                {
-                    Debug.LogWarning(e);
-                }
-        }
+        //            Drawing.DrawString(new Vector2(wtsPlayer.x, Screen.height - wtsPlayer.y), Color.magenta, Drawing.TextFlags.TEXT_FLAG_CENTERED, $"{animal.name} [{Math.Round(distance)}m]");
+        //        }
+        //        catch (Exception e)
+        //        {
+        //            Debug.LogWarning(e);
+        //        }
+        //}
 
-        private void DrawResouces()
-        {
-            foreach (var res in ResourceNodes)
-                try
-                {
-                    if (res == null)
-                        continue;
+        //private void DrawResouces()
+        //{
+        //    foreach (var res in ResourceNodes)
+        //        try
+        //        {
+        //            if (res == null)
+        //                continue;
 
-                    var distance = Vector3.Distance(ManagerPlayerOwner.transform.position, res.transform.position);
+        //            var distance = Vector3.Distance(ManagerPlayerOwner.transform.position, res.transform.position);
 
-                    if (distance > BaseSettings.GetSettings.EspSettings.Range)
-                        continue;
+        //            if (distance > BaseSettings.GetSettings.EspSettings.Range)
+        //                continue;
 
-                    var wtsPlayer = Camera.main.WorldToScreenPoint(res.transform.position);
-                    if (wtsPlayer.z < 0.0)
-                        continue;
+        //            var wtsPlayer = Camera.main.WorldToScreenPoint(res.transform.position);
+        //            if (wtsPlayer.z < 0.0)
+        //                continue;
 
-                    Drawing.DrawString(new Vector2(wtsPlayer.x, Screen.height - wtsPlayer.y), Color.cyan, Drawing.TextFlags.TEXT_FLAG_CENTERED, $"{res.name} [{Math.Round(distance)}m]");
-                }
-                catch (Exception e)
-                {
-                    Debug.LogWarning(e);
-                }
-        }
+        //            Drawing.DrawString(new Vector2(wtsPlayer.x, Screen.height - wtsPlayer.y), Color.cyan, Drawing.TextFlags.TEXT_FLAG_CENTERED, $"{res.name} [{Math.Round(distance)}m]");
+        //        }
+        //        catch (Exception e)
+        //        {
+        //            Debug.LogWarning(e);
+        //        }
+        //}
 
-        private void DrawCrates()
-        {
-            foreach (var crate in LootCrates)
-                try
-                {
-                    if (crate == null)
-                        continue;
+        //private void DrawCrates()
+        //{
+        //    foreach (var crate in LootCrates)
+        //        try
+        //        {
+        //            if (crate == null)
+        //                continue;
 
-                    var distance = Vector3.Distance(ManagerPlayerOwner.transform.position, crate.transform.position);
+        //            var distance = Vector3.Distance(ManagerPlayerOwner.transform.position, crate.transform.position);
 
-                    if (distance > BaseSettings.GetSettings.EspSettings.Range)
-                        continue;
+        //            if (distance > BaseSettings.GetSettings.EspSettings.Range)
+        //                continue;
 
-                    var wtsPlayer = Camera.main.WorldToScreenPoint(crate.transform.position);
-                    if (wtsPlayer.z < 0.0)
-                        continue;
-                    Drawing.DrawString(new Vector2(wtsPlayer.x, Screen.height - wtsPlayer.y), Color.yellow, Drawing.TextFlags.TEXT_FLAG_CENTERED, $"{crate.name} [{Math.Round(distance)}m]");
-                }
-                catch (Exception e)
-                {
-                    Debug.LogWarning(e);
-                }
-        }
+        //            var wtsPlayer = Camera.main.WorldToScreenPoint(crate.transform.position);
+        //            if (wtsPlayer.z < 0.0)
+        //                continue;
+        //            Drawing.DrawString(new Vector2(wtsPlayer.x, Screen.height - wtsPlayer.y), Color.yellow, Drawing.TextFlags.TEXT_FLAG_CENTERED, $"{crate.name} [{Math.Round(distance)}m]");
+        //        }
+        //        catch (Exception e)
+        //        {
+        //            Debug.LogWarning(e);
+        //        }
+        //}
 
-        private void DrawWrecks()
-        {
-            foreach (var crate in Wrecks)
-                try
-                {
-                    if (crate == null)
-                        continue;
+        //private void DrawWrecks()
+        //{
+        //    foreach (var crate in Wrecks)
+        //        try
+        //        {
+        //            if (crate == null)
+        //                continue;
 
-                    var distance = Vector3.Distance(ManagerPlayerOwner.transform.position, crate.transform.position);
+        //            var distance = Vector3.Distance(ManagerPlayerOwner.transform.position, crate.transform.position);
 
-                    if (distance > BaseSettings.GetSettings.EspSettings.Range)
-                        continue;
+        //            if (distance > BaseSettings.GetSettings.EspSettings.Range)
+        //                continue;
 
-                    var wtsPlayer = Camera.main.WorldToScreenPoint(crate.transform.position);
-                    if (wtsPlayer.z < 0.0)
-                        continue;
-                    Drawing.DrawString(new Vector2(wtsPlayer.x, Screen.height - wtsPlayer.y), Color.yellow, Drawing.TextFlags.TEXT_FLAG_CENTERED, $"{crate.name} [{Math.Round(distance)}m]");
-                }
-                catch (Exception e)
-                {
-                    Debug.LogWarning(e);
-                }
-        }
+        //            var wtsPlayer = Camera.main.WorldToScreenPoint(crate.transform.position);
+        //            if (wtsPlayer.z < 0.0)
+        //                continue;
+        //            Drawing.DrawString(new Vector2(wtsPlayer.x, Screen.height - wtsPlayer.y), Color.yellow, Drawing.TextFlags.TEXT_FLAG_CENTERED, $"{crate.name} [{Math.Round(distance)}m]");
+        //        }
+        //        catch (Exception e)
+        //        {
+        //            Debug.LogWarning(e);
+        //        }
+        //}
 
         private void SetStructLodDist(float Dist)
         {
