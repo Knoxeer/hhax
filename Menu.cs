@@ -8,6 +8,7 @@ namespace hhax
 {
     public class Menu : MonoBehaviour
     {
+        public uLink.NetworkView[] NetworkView;
         private bool _frameAimKey;
         public AnimalStatManagerClient[] Animals;
         public FPSInputController FpsInputController;
@@ -23,6 +24,8 @@ namespace hhax
 
         private void Start()
         {
+            StartCoroutine(UpdateNetworkView());
+            //
             StartCoroutine(UpdatePlayers());
             StartCoroutine(UpdateResouceNodes());
             StartCoroutine(UpdateAnimals());
@@ -43,6 +46,14 @@ namespace hhax
             #endregion
 
             #region GUIKeys
+
+            if (Input.GetKeyDown(KeyCode.F7))
+                DisableStructColliders();
+
+            if (Input.GetKeyDown(KeyCode.F8))
+                EnableStructColliders();
+
+                //Singleton<GameManager>.Instance.HeadlessBuild = true;
 
             if (Input.GetKeyDown(KeyCode.F5))
                 BaseSettings.GetSettings.ShowEspMenu = !BaseSettings.GetSettings.ShowEspMenu;
@@ -112,8 +123,8 @@ namespace hhax
 
                 if (BaseSettings.GetSettings.EspSettings.IsEnabled)
                 {
-                    if (BaseSettings.GetSettings.EspSettings.DrawPlayers && Players != null)
-                        DrawPlayers();
+                    //if (BaseSettings.GetSettings.EspSettings.DrawPlayers && Players != null)
+                    //    DrawPlayers();
                     if (BaseSettings.GetSettings.EspSettings.DrawResouces && ResourceNodes != null)
                         DrawResouces();
                     if (BaseSettings.GetSettings.EspSettings.DrawAnimals && Animals != null)
@@ -122,14 +133,16 @@ namespace hhax
                         DrawCrates();
                     if (BaseSettings.GetSettings.EspSettings.DrawLootCrates && UsableItems != null)
                         DrawWrecks();
-                    if (BaseSettings.GetSettings.EspSettings.DrawOwnershipStakes && UsableItems != null)
-                        DrawOwnershipStakes("OwnershipStake");
-                    if (BaseSettings.GetSettings.EspSettings.DrawWrecks && UsableItems != null)
+                    if (BaseSettings.GetSettings.EspSettings.DrawOwnershipStakes && NetworkView != null)
+                        DrawChunkNetworkView("OwnershipStake");
+                    if (BaseSettings.GetSettings.EspSettings.DrawWrecks && NetworkView != null)
                     {
-                        DrawOwnershipStakes("RoachProxy");
-                        DrawOwnershipStakes("GoatProxy");
-                        DrawOwnershipStakes("KangaProxy");
+                        DrawChunkNetworkView("RoachProxy");
+                        DrawChunkNetworkView("GoatProxy");
+                        DrawChunkNetworkView("KangaProxy");
                     }
+                    if (BaseSettings.GetSettings.EspSettings.DrawPlayers && NetworkView != null)
+                        DrawChunkNetworkView("PlayerProxy");
                 }
 
 
@@ -140,7 +153,7 @@ namespace hhax
 
                     // Show all usable items
                     if (UsableItems != null)
-                        DrawOwnershipStakes("all");
+                        DrawChunkNetworkView("all");
                 }
 
                 #endregion
@@ -166,53 +179,57 @@ namespace hhax
             }
         }
 
-        private void DrawOwnershipStakes(string Fighter = "")
+        private void DrawChunkNetworkView(string chunk = "")
         {
-            foreach (var stake in UsableItems)
+            foreach (var nv in NetworkView)
                 try
                 {
-                    if (stake == null)
+                    if (nv == null || !nv.isActiveAndEnabled)
                         continue;
 
-                    if (Fighter == "all") goto all;
+                    if (chunk == "all") goto all;
 
-                    if (Fighter == "" || !stake.name.ToLower().Contains(Fighter.ToLower()))
+                    if (chunk == "" || !nv.name.ToLower().Contains(chunk.ToLower()))
                         continue;
 
                     all:
 
-                    var distance = Vector3.Distance(ManagerPlayerOwner.transform.position, stake.transform.position);
+                    var distance = Vector3.Distance(ManagerPlayerOwner.transform.position, nv.transform.position);
 
                     if (distance > BaseSettings.GetSettings.EspSettings.Range)
                         continue;
 
-                    var wtsPlayer = Camera.main.WorldToScreenPoint(stake.transform.position);
+                    var wtsPlayer = Camera.main.WorldToScreenPoint(nv.transform.position);
                     if (wtsPlayer.z < 0.0)
                         continue;
 
-                    string shortName = stake.name;
+                    string shortName = nv.name;
                     Color color = Color.white;
-                    if (stake.name == "OwnershipStakeDynamicConstructedProxy(Clone)")
+                    if (nv.name == "OwnershipStakeDynamicConstructedProxy(Clone)")
                     {
                         shortName = "Тотем";
                         color = Color.black;
                     }
-                    else if (stake.name == "RoachProxy(Clone)")
+                    else if (nv.name == "RoachProxy(Clone)")
                     {
                         shortName = "Машина";
                         color = Color.red;
                     }
-                    else if (stake.name == "GoatProxy(Clone)")
+                    else if (nv.name == "GoatProxy(Clone)")
                     {
-                        shortName = "Квадрик";
+                        shortName = "Квадбайк";
                         color = Color.red;
                     }
-                    else if (stake.name == "KangaProxy(Clone)")
+                    else if (nv.name == "KangaProxy(Clone)")
                     {
                         shortName = "Канга";
                         color = Color.red;
                     }
-
+                    else if (nv.name.Contains("PlayerProxy"))
+                    {
+                        shortName = nv.GetComponent<DisplayProxyName>().Name + "(P)";
+                        color = Color.yellow;
+                    }
                     Drawing.DrawString(new Vector2(wtsPlayer.x, Screen.height - wtsPlayer.y), color, Drawing.TextFlags.TEXT_FLAG_CENTERED, $"[{shortName} - {Math.Round(distance)}m]");
                 }
                 catch (Exception e)
@@ -307,6 +324,24 @@ namespace hhax
         }
 
         #region Whiles
+
+        public IEnumerator UpdateNetworkView()
+        {
+            if (BaseSettings.GetSettings.IsDebug)
+                Debug.Log("UpdateNetworkView is running");
+            while (true)
+            {
+                try
+                {
+                    NetworkView = UnityEngine.Object.FindObjectsOfType<uLink.NetworkView>();
+                }
+                catch (Exception e)
+                {
+                    Debug.LogError("Exception in UpdateNetworkView! " + e);
+                }
+                yield return new WaitForSeconds(2f);
+            }
+        }
 
         public IEnumerator UpdatePlayers()
         {
@@ -535,6 +570,14 @@ namespace hhax
             StructureManagerLod[] lods = UnityEngine.Object.FindObjectsOfType<StructureManagerLod>();
             foreach (StructureManagerLod lod in lods)
                 if (lod.isActiveAndEnabled) lod.LodDistance = Dist;
+        }
+
+        private void EnableStructColliders() => DisableStructColliders(false);
+        private void DisableStructColliders(bool disable = true)
+        {
+            StructureManagerCollider[] colliders = UnityEngine.Object.FindObjectsOfType<StructureManagerCollider>();
+            foreach (StructureManagerCollider collider in colliders)          
+                collider.enabled = !disable;          
         }
 
         #endregion

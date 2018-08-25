@@ -4,13 +4,23 @@ namespace hhax
 {
     public class Loader
     {
+        public static bool HaxLoaded = false;
+
         public static GameObject LoadObject;
 
         public static void Load()
         {
-            LoadObject = new GameObject();
-            LoadObject.AddComponent<Menu>();
-            Object.DontDestroyOnLoad(LoadObject);
+            if (HaxLoaded) return;
+
+            HaxLoaded = false;
+            try
+            {
+                LoadObject = new GameObject();
+                LoadObject.AddComponent<Menu>();
+                Object.DontDestroyOnLoad(LoadObject);
+                HaxLoaded = true;
+            }
+            catch { };
         }
 
         public static void Unload()
