@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading;
 using hhax.Extensions;
 using UnityEngine;
 
@@ -28,8 +29,6 @@ namespace hhax
             //
             StartCoroutine(UpdatePlayers());
             StartCoroutine(UpdateAnimals());
-            //StartCoroutine(UpdateResouceNodes());
-            //StartCoroutine(UpdateUsableItems());
             BaseSettings.GetSettings.IsDebug = true;
         }
 
@@ -47,66 +46,31 @@ namespace hhax
 
             #region GUIKeys
 
-            if (Input.GetKeyDown(KeyCode.F7))
-                DisableStructColliders();
-
-            if (Input.GetKeyDown(KeyCode.F8))
-                EnableStructColliders();
-
-                //Singleton<GameManager>.Instance.HeadlessBuild = true;
-
-            if (Input.GetKeyDown(KeyCode.F5))
+            if (Input.GetKeyDown(KeyCode.Insert))
                 BaseSettings.GetSettings.ShowEspMenu = !BaseSettings.GetSettings.ShowEspMenu;
-
-            if (Input.GetKeyDown(KeyCode.F6))
-                BaseSettings.GetSettings.ShowAimbotMenu = !BaseSettings.GetSettings.ShowAimbotMenu;
 
             #endregion
 
             #region Dodaj znajomych
 
-            if (Input.GetKeyDown(KeyCode.F3))
-            {
-                var ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-                RaycastHit hit;
-                if (Physics.Raycast(ray, out hit))
-                {
-                    var proxyName = hit.transform.GetComponent<DisplayProxyName>();
-                    if (proxyName != null)
-                    {
-                        BaseSettings.GetSettings.Friends.Add(proxyName.Name);
-                        Debug.Log($"{proxyName.Name} now is your friend!");
-                    }
-                }
-            }
-
             #endregion
 
-            #region Usuń znajomych
 
-            if (Input.GetKey(KeyCode.F3) && Input.GetKeyDown(KeyCode.F4))
-                BaseSettings.GetSettings.Friends = new List<string>();
-
-            #endregion
-
-            //if (Input.GetKeyDown(KeyCode.Z))
-            //    foreach (var monoBehaviour in ManagerPlayerOwner.GetComponents<Component>())
-            //        print(monoBehaviour);
-
-            if (Input.GetMouseButton(3) && BaseSettings.GetSettings.AimBotSettings.IsEnabled)
+            if (Input.GetMouseButton(1) && BaseSettings.GetSettings.AimBotSettings.IsEnabled)
                 if (_frameAimKey && Target != null)
                     HuamnAimbot(Target);
                 else
                     HuamnAimbot();
             else
                 _frameAimKey = false;
+           
 
-
-            if (Input.GetMouseButton(4))
+            if (Input.GetMouseButton(1))
             {
                 HuamnAimbot();
             }
         }
+        
 
         private void OnGUI()
         {
@@ -117,22 +81,9 @@ namespace hhax
                 if (BaseSettings.GetSettings.ShowEspMenu)
                     Drawing.DrawEspWindow();
 
-                if (BaseSettings.GetSettings.ShowAimbotMenu)
-                    Drawing.DrawAimWindow();
-
 
                 if (BaseSettings.GetSettings.EspSettings.IsEnabled)
                 {
-                    //if (BaseSettings.GetSettings.EspSettings.DrawPlayers && Players != null)
-                    //    DrawPlayers();
-                    //if (BaseSettings.GetSettings.EspSettings.DrawResouces && ResourceNodes != null)
-                    //    DrawResouces();
-                    //if (BaseSettings.GetSettings.EspSettings.DrawAnimals && Animals != null)
-                    //    DrawAnimals();
-                    //if (BaseSettings.GetSettings.EspSettings.DrawLootCrates && UsableItems != null)
-                    //    DrawCrates();
-                    //if (BaseSettings.GetSettings.EspSettings.DrawLootCrates && UsableItems != null)
-                    //    DrawWrecks();
                     if (BaseSettings.GetSettings.EspSettings.DrawOwnershipStakes && NetworkView != null)
                         DrawChunkNetworkView("OwnershipStake");
                     if (BaseSettings.GetSettings.EspSettings.DrawWrecks && NetworkView != null)
@@ -148,13 +99,27 @@ namespace hhax
 
                 if (Input.GetKey(KeyCode.LeftAlt))
                 {
-                    // уляля
-                    SetStructLodDist(BaseSettings.GetSettings.EspSettings.StructManLodDist);
+                    // вкл
+                    SetStructLodDist(BaseSettings.GetSettings.EspSettings.StructManLodDist = 0);
 
-                    // Show all usable items
-                    if (UsableItems != null)
-                        DrawChunkNetworkView("all");
+                    // Simple BunnyHop Don't work
+                   /* while (true)
+                    {
+                        if (Input.GetKey(KeyCode.Space))
+                        {
+                            SendKeys.Send("{space}");
+                        }
+                        Thread.Sleep(180);
+                    }
+                    */
                 }
+
+                if (Input.GetKey(KeyCode.RightAlt))
+                {
+                    // выкл
+                    SetStructLodDist(BaseSettings.GetSettings.EspSettings.StructManLodDist = 600); 
+                }
+
 
                 #endregion
 
@@ -177,6 +142,11 @@ namespace hhax
             {
                 Debug.LogWarning(e);
             }
+        }
+
+        private int GetKeyState(char v)
+        {
+            throw new NotImplementedException();
         }
 
         private void DrawChunkNetworkView(string chunk = "")
@@ -238,11 +208,6 @@ namespace hhax
                 }
         }
 
-        private void OnApplicationQuit()
-        {
-            BaseSettings.SaveSettings();
-        }
-
 
         private void HuamnAimbot(NetworkEntityManagerPlayerProxy myTarget = null)
         {
@@ -286,9 +251,6 @@ namespace hhax
 
         private void UpdateCrates()
         {
-            //LootCrates.Clear();
-            //cleaup
-
             foreach (var crate in LootCrates)
                 if (crate.IsNullOrDestroyed())
                     LootCrates.Remove(crate);
@@ -362,34 +324,6 @@ namespace hhax
             }
         }
 
-        //public IEnumerator UpdateUsableItems()
-        //{
-        //    if (BaseSettings.GetSettings.IsDebug)
-        //        Debug.Log("UpdateUsableItems is running");
-        //    while (true)
-        //    {
-        //        try
-        //        {
-        //            if (BaseSettings.GetSettings.EspSettings.IsEnabled && (BaseSettings.GetSettings.EspSettings.DrawLootCrates || BaseSettings.GetSettings.EspSettings.DrawWrecks || BaseSettings.GetSettings.EspSettings.DrawOwnershipStakes))
-        //            {
-        //                UsableItems = FindObjectsOfType<GenericDeviceUsableInterfaceClient>();
-
-        //                if (BaseSettings.GetSettings.EspSettings.DrawLootCrates)
-        //                    UpdateCrates();
-        //                if (BaseSettings.GetSettings.EspSettings.DrawWrecks)
-        //                    FindWrecks();
-        //                if (BaseSettings.GetSettings.EspSettings.DrawOwnershipStakes)
-        //                    FindStakes();
-        //            }
-        //        }
-        //        catch (Exception e)
-        //        {
-        //            Debug.LogError("Exception in UpdateUsableItems! " + e);
-        //        }
-        //        yield return new WaitForSeconds(5f);
-        //    }
-        //}
-
         public IEnumerator UpdateAnimals()
         {
             if (BaseSettings.GetSettings.IsDebug)
@@ -410,160 +344,9 @@ namespace hhax
             }
         }
 
-        //public IEnumerator UpdateResouceNodes()
-        //{
-        //    if (BaseSettings.GetSettings.IsDebug)
-        //        Debug.Log("UpdateResouceNodes is running");
-        //    while (true)
-        //    {
-        //        try
-        //        {
-        //            if (BaseSettings.GetSettings.EspSettings.IsEnabled && BaseSettings.GetSettings.EspSettings.DrawResouces)
-        //                ResourceNodes = FindObjectsOfType<DestroyInTime>();
-        //        }
-        //        catch (Exception e)
-        //        {
-        //            Debug.LogError("Exception in UpdateResouceNodes! " + e);
-        //        }
-        //        yield return new WaitForSeconds(5f);
-        //    }
-        //}
-
         #endregion
 
         #region Draw
-
-        //private void DrawPlayers()
-        //{
-        //    foreach (var playerProxy in Players)
-        //        try
-        //        {
-        //            if (playerProxy == null)
-        //                continue;
-        //            var distance = Vector3.Distance(ManagerPlayerOwner.transform.position, playerProxy.transform.position);
-
-        //            if (distance > BaseSettings.GetSettings.EspSettings.Range)
-        //                continue;
-
-        //            var wtsPlayer = Camera.main.WorldToScreenPoint(playerProxy.transform.position);
-        //            if (wtsPlayer.z < 0.0)
-        //                continue;
-
-        //            var nameProxy = playerProxy.GetComponent<DisplayProxyName>();
-        //            var description = $"{nameProxy.Name} [{Math.Round(distance)}m]";
-
-        //            var color = BaseSettings.GetSettings.Friends.Exists(s => s.Equals(nameProxy.Name)) ? Color.green : Color.red;
-
-
-        //            var height = (Target.GetBone(EHitboxItem.Head).transform.position - Target.GetBone(EHitboxItem.LeftFoot).transform.position).x;
-        //            var width = height / 2.6f;
-
-        //            Drawing.DrawString(new Vector2(wtsPlayer.x, Screen.height - wtsPlayer.y), color, Drawing.TextFlags.TEXT_FLAG_CENTERED, description);
-        //            Drawing.DrawBoxOutlines(new Vector2(wtsPlayer.x, Screen.height - wtsPlayer.y), new Vector2(height, width), 1f, color);
-        //        }
-        //        catch (Exception e)
-        //        {
-        //            Debug.LogWarning(e);
-        //        }
-        //}
-
-        //private void DrawAnimals()
-        //{
-        //    foreach (var animal in Animals)
-        //        try
-        //        {
-        //            if (animal == null)
-        //                continue;
-
-        //            var distance = Vector3.Distance(ManagerPlayerOwner.transform.position, animal.transform.position);
-
-        //            if (distance > BaseSettings.GetSettings.EspSettings.Range)
-        //                continue;
-
-        //            var wtsPlayer = Camera.main.WorldToScreenPoint(animal.transform.position);
-        //            if (wtsPlayer.z < 0.0)
-        //                continue;
-
-        //            Drawing.DrawString(new Vector2(wtsPlayer.x, Screen.height - wtsPlayer.y), Color.magenta, Drawing.TextFlags.TEXT_FLAG_CENTERED, $"{animal.name} [{Math.Round(distance)}m]");
-        //        }
-        //        catch (Exception e)
-        //        {
-        //            Debug.LogWarning(e);
-        //        }
-        //}
-
-        //private void DrawResouces()
-        //{
-        //    foreach (var res in ResourceNodes)
-        //        try
-        //        {
-        //            if (res == null)
-        //                continue;
-
-        //            var distance = Vector3.Distance(ManagerPlayerOwner.transform.position, res.transform.position);
-
-        //            if (distance > BaseSettings.GetSettings.EspSettings.Range)
-        //                continue;
-
-        //            var wtsPlayer = Camera.main.WorldToScreenPoint(res.transform.position);
-        //            if (wtsPlayer.z < 0.0)
-        //                continue;
-
-        //            Drawing.DrawString(new Vector2(wtsPlayer.x, Screen.height - wtsPlayer.y), Color.cyan, Drawing.TextFlags.TEXT_FLAG_CENTERED, $"{res.name} [{Math.Round(distance)}m]");
-        //        }
-        //        catch (Exception e)
-        //        {
-        //            Debug.LogWarning(e);
-        //        }
-        //}
-
-        //private void DrawCrates()
-        //{
-        //    foreach (var crate in LootCrates)
-        //        try
-        //        {
-        //            if (crate == null)
-        //                continue;
-
-        //            var distance = Vector3.Distance(ManagerPlayerOwner.transform.position, crate.transform.position);
-
-        //            if (distance > BaseSettings.GetSettings.EspSettings.Range)
-        //                continue;
-
-        //            var wtsPlayer = Camera.main.WorldToScreenPoint(crate.transform.position);
-        //            if (wtsPlayer.z < 0.0)
-        //                continue;
-        //            Drawing.DrawString(new Vector2(wtsPlayer.x, Screen.height - wtsPlayer.y), Color.yellow, Drawing.TextFlags.TEXT_FLAG_CENTERED, $"{crate.name} [{Math.Round(distance)}m]");
-        //        }
-        //        catch (Exception e)
-        //        {
-        //            Debug.LogWarning(e);
-        //        }
-        //}
-
-        //private void DrawWrecks()
-        //{
-        //    foreach (var crate in Wrecks)
-        //        try
-        //        {
-        //            if (crate == null)
-        //                continue;
-
-        //            var distance = Vector3.Distance(ManagerPlayerOwner.transform.position, crate.transform.position);
-
-        //            if (distance > BaseSettings.GetSettings.EspSettings.Range)
-        //                continue;
-
-        //            var wtsPlayer = Camera.main.WorldToScreenPoint(crate.transform.position);
-        //            if (wtsPlayer.z < 0.0)
-        //                continue;
-        //            Drawing.DrawString(new Vector2(wtsPlayer.x, Screen.height - wtsPlayer.y), Color.yellow, Drawing.TextFlags.TEXT_FLAG_CENTERED, $"{crate.name} [{Math.Round(distance)}m]");
-        //        }
-        //        catch (Exception e)
-        //        {
-        //            Debug.LogWarning(e);
-        //        }
-        //}
 
         private void SetStructLodDist(float Dist)
         {
@@ -581,5 +364,13 @@ namespace hhax
         }
 
         #endregion
+    }
+
+    internal class SendKeys
+    {
+        internal static void Send(string v)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

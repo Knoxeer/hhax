@@ -37,14 +37,7 @@ namespace hhax
             var style = new GUIStyle(GUI.skin.label) {normal = {textColor = color}, fontSize = 13};
             if (center)
                 pos.x -= style.CalcSize(new GUIContent(text)).x / 2f;
-            //264 default
-            GUI.Label(new Rect(pos.x, pos.y, 264f, 20f), text, style);
-        }
-
-        public static Vector2 TextBounds(string text)
-        {
-            var style = new GUIStyle(GUI.skin.label) {fontSize = 13};
-            return style.CalcSize(new GUIContent(text));
+            GUI.Label(new Rect(pos.x, pos.y, 464f, 20f), text, style);
         }
 
 
@@ -83,7 +76,7 @@ namespace hhax
         public static void DrawEspWindow()
         {
             GUI.color = Color.red;
-            GUI.Window(0, new Rect(20f, 20f, 235f, 245f), delegate
+            GUI.Window(0, new Rect(40f, 150f, 435f, 245f), delegate
             {
                 BaseSettings.GetSettings.EspSettings.IsEnabled = GUI.Toggle(new Rect(10f, 20, 130f, 20f), BaseSettings.GetSettings.EspSettings.IsEnabled, "Включить ESP");
                 BaseSettings.GetSettings.EspSettings.DrawResouces = GUI.Toggle(new Rect(10f, 40f, 130f, 20f), BaseSettings.GetSettings.EspSettings.DrawResouces, "Ресурсы");
@@ -92,30 +85,20 @@ namespace hhax
                 BaseSettings.GetSettings.EspSettings.DrawWrecks = GUI.Toggle(new Rect(10f, 100f, 130f, 20f), BaseSettings.GetSettings.EspSettings.DrawWrecks, "Машины");
                 BaseSettings.GetSettings.EspSettings.DrawAnimals = GUI.Toggle(new Rect(10f, 120f, 130f, 20f), BaseSettings.GetSettings.EspSettings.DrawAnimals, "Животные");
                 BaseSettings.GetSettings.EspSettings.DrawOwnershipStakes = GUI.Toggle(new Rect(10f, 140f, 130f, 20f), BaseSettings.GetSettings.EspSettings.DrawOwnershipStakes, "Тотемы");
-                GUI.Label(new Rect(10f, 160f, 130f, 20f), $"Расстояние: {Math.Round(BaseSettings.GetSettings.EspSettings.Range)}м");
-                BaseSettings.GetSettings.EspSettings.Range = GUI.HorizontalSlider(new Rect(10, 180f, 130f, 20f), BaseSettings.GetSettings.EspSettings.Range, 100f, 500f);
+
+                GUI.Label(new Rect(10f, 180f, 130f, 20f), $"Расстояние: {Math.Round(BaseSettings.GetSettings.EspSettings.Range)}м");
+                BaseSettings.GetSettings.EspSettings.Range = GUI.HorizontalSlider(new Rect(10, 200f, 130f, 20f), BaseSettings.GetSettings.EspSettings.Range, 100f, 500f);
 
 
-                // уляля
-                GUI.Label(new Rect(10f, 200f, 130, 20), $"РасстояниеЛод: {Math.Round(BaseSettings.GetSettings.EspSettings.StructManLodDist)}");
-                BaseSettings.GetSettings.EspSettings.StructManLodDist = GUI.HorizontalSlider(new Rect(10, 220f, 130f, 20f), BaseSettings.GetSettings.EspSettings.StructManLodDist, 0f, 999f);
-
-
+                //так проще
+                BaseSettings.GetSettings.AimBotSettings.IsEnabled = GUI.Toggle(new Rect(250f, 20, 130f, 20f), BaseSettings.GetSettings.AimBotSettings.IsEnabled, "Включить Аимбот");
+                BaseSettings.GetSettings.AimBotSettings.AimAtPlayers = GUI.Toggle(new Rect(250f, 40f, 130f, 20f), BaseSettings.GetSettings.AimBotSettings.AimAtPlayers, "Игроки");
+                BaseSettings.GetSettings.AimBotSettings.AimAtAnimals = GUI.Toggle(new Rect(250f, 60f, 130f, 20f), BaseSettings.GetSettings.AimBotSettings.AimAtAnimals, "Животные");
 
             }, "By ddd, Unity");
-            GUI.color = Color.white;
+
         }
 
-        public static void DrawAimWindow()
-        {
-            GUI.color = Color.red;
-            GUI.Window(0, new Rect(20f, 20f, 235f, 145f), delegate
-            {
-                BaseSettings.GetSettings.AimBotSettings.IsEnabled = GUI.Toggle(new Rect(10f, 20, 130f, 20f), BaseSettings.GetSettings.AimBotSettings.IsEnabled, "Включить Аимбот");
-                BaseSettings.GetSettings.AimBotSettings.AimAtPlayers = GUI.Toggle(new Rect(10f, 40f, 130f, 20f), BaseSettings.GetSettings.AimBotSettings.AimAtPlayers, "Игроки");
-                BaseSettings.GetSettings.AimBotSettings.AimAtAnimals = GUI.Toggle(new Rect(10f, 60f, 130f, 20f), BaseSettings.GetSettings.AimBotSettings.AimAtAnimals, "Животные");
-            }, "By ddd, Unity");
-            GUI.color = Color.white;
-        }
     }
+
 }

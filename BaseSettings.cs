@@ -32,7 +32,7 @@ namespace hhax
 
         private static Settings GetDefault()
         {
-            return new Settings {ShowEspMenu = false, ShowAimbotMenu = false, IsDebug = false, Friends = new List<string>(), EspSettings = new EspSettings {DrawLootCrates = false, Range = 300f, StructManLodDist = 600f,  DrawAnimals = false, DrawResouces = false, DrawPlayers = false, IsEnabled = false, DrawWrecks = false}, AimBotSettings = new AimBotSettings {IsEnabled = false, AimAtPlayers = false, AimAtAnimals = false, AimAtFriends = false}, AimbotMenuKeyCode = KeyCode.F6, EspMenuKeyCode = KeyCode.F5};
+            return new Settings {ShowEspMenu = false, IsDebug = false, Friends = new List<string>(), EspSettings = new EspSettings {DrawLootCrates = false, Range = 300f, StructManLodDist = 0f,  DrawAnimals = false, DrawResouces = false, DrawPlayers = false, IsEnabled = false, DrawWrecks = false}, AimBotSettings = new AimBotSettings {IsEnabled = false, AimAtPlayers = false, AimAtAnimals = false, AimAtFriends = false}, EspMenuKeyCode = KeyCode.F5};
         }
 
         public static void SaveSettings()
@@ -50,13 +50,11 @@ namespace hhax
     [Serializable]
     public class Settings
     {
-        public bool ShowAimbotMenu { get; set; }
         public bool ShowEspMenu { get; set; }
         public bool IsDebug { get; set; } = true;
         public EspSettings EspSettings { get; set; } = new EspSettings();
         public AimBotSettings AimBotSettings { get; set; } = new AimBotSettings();
         public List<string> Friends { get; set; } = new List<string>();
-        public KeyCode AimbotMenuKeyCode { get; set; } = KeyCode.F6;
         public KeyCode EspMenuKeyCode { get; set; } = KeyCode.F5;
     }
 
@@ -71,7 +69,7 @@ namespace hhax
         public bool DrawPlayers { get; set; }
         public bool IsEnabled { get; set; }
         public float Range { get; set; } = 300f;
-        public float StructManLodDist { get; set; } = 600f;
+        public float StructManLodDist { get; set; } = 0f;
     }
 
     [Serializable]
