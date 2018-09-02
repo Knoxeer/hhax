@@ -8,7 +8,6 @@ namespace hhax
         [Flags]
         public enum TextFlags
         {
-            TEXT_FLAG_NONE = 0,
             TEXT_FLAG_CENTERED = 1,
             TEXT_FLAG_OUTLINED = 2,
             TEXT_FLAG_DROPSHADOW = 3
@@ -26,79 +25,75 @@ namespace hhax
                 PrivateDrawString(pos + new Vector2(0f, 1f), Color.black, text, center);
                 PrivateDrawString(pos + new Vector2(0f, -1f), Color.black, text, center);
             }
-            if ((flags & TextFlags.TEXT_FLAG_DROPSHADOW) == TextFlags.TEXT_FLAG_DROPSHADOW)
+            if ((flags & TextFlags.TEXT_FLAG_DROPSHADOW) == TextFlags.TEXT_FLAG_DROPSHADOW) 
                 PrivateDrawString(pos + new Vector2(1f, 1f), Color.black, text, center);
-            PrivateDrawString(pos, color, text, center);
+                PrivateDrawString(pos, color, text, center);
         }
 
 
         private static void PrivateDrawString(Vector2 pos, Color color, string text, bool center)
         {
-            var style = new GUIStyle(GUI.skin.label) {normal = {textColor = color}, fontSize = 13};
-            if (center)
-                pos.x -= style.CalcSize(new GUIContent(text)).x / 2f;
-            GUI.Label(new Rect(pos.x, pos.y, 464f, 20f), text, style);
-        }
-
-
-        public static void DrawLine(Vector2 pointA, Vector2 pointB, Color color)
-        {
-            GL.Begin(1);
-            GL.Color(color);
-            GL.Vertex3(pointA.x, pointA.y, 0f);
-            GL.Vertex3(pointB.x, pointB.y, 0f);
-            GL.End();
+            var style = new GUIStyle(GUI.skin.label) { normal = { textColor = color }, fontSize = 13 };
+            GUI.Label(new Rect(pos.x, pos.y, 264f, 20f), text, style);
         }
 
         public static void DrawBox(Vector2 pos, Vector2 size, Color color)
         {
-            if (Texture2D == null)
                 Texture2D = new Texture2D(1, 1);
             if (color != Texture2DColor)
             {
-                Texture2D.SetPixel(0, 0, color);
-                Texture2D.Apply();
                 Texture2DColor = color;
             }
             GUI.DrawTexture(new Rect(pos.x, pos.y, size.x, size.y), Texture2D);
         }
 
-
-        public static void DrawBoxOutlines(Vector2 position, Vector2 size, float borderSize, Color color)
-        {
-            DrawBox(new Vector2(position.x + borderSize, position.y), new Vector2(size.x - 2f * borderSize, borderSize), color);
-            DrawBox(new Vector2(position.x, position.y), new Vector2(borderSize, size.y), color);
-            DrawBox(new Vector2(position.x + size.x - borderSize, position.y), new Vector2(borderSize, size.y), color);
-            DrawBox(new Vector2(position.x + borderSize, position.y + size.y - borderSize), new Vector2(size.x - 2f * borderSize, borderSize), color);
-        }
-
-
-        public static void DrawEspWindow()
-        {
-            GUI.color = Color.red;
-            GUI.Window(0, new Rect(40f, 150f, 435f, 245f), delegate
+            public static void DrawEspWindow()
             {
-                BaseSettings.GetSettings.EspSettings.IsEnabled = GUI.Toggle(new Rect(10f, 20, 130f, 20f), BaseSettings.GetSettings.EspSettings.IsEnabled, "Включить ESP");
-                BaseSettings.GetSettings.EspSettings.DrawResouces = GUI.Toggle(new Rect(10f, 40f, 130f, 20f), BaseSettings.GetSettings.EspSettings.DrawResouces, "Ресурсы");
-                BaseSettings.GetSettings.EspSettings.DrawPlayers = GUI.Toggle(new Rect(10f, 60f, 130f, 20f), BaseSettings.GetSettings.EspSettings.DrawPlayers, "Игроки");
-                BaseSettings.GetSettings.EspSettings.DrawLootCrates = GUI.Toggle(new Rect(10f, 80f, 130f, 20f), BaseSettings.GetSettings.EspSettings.DrawLootCrates, "Упавший лут");
-                BaseSettings.GetSettings.EspSettings.DrawWrecks = GUI.Toggle(new Rect(10f, 100f, 130f, 20f), BaseSettings.GetSettings.EspSettings.DrawWrecks, "Машины");
-                BaseSettings.GetSettings.EspSettings.DrawAnimals = GUI.Toggle(new Rect(10f, 120f, 130f, 20f), BaseSettings.GetSettings.EspSettings.DrawAnimals, "Животные");
-                BaseSettings.GetSettings.EspSettings.DrawOwnershipStakes = GUI.Toggle(new Rect(10f, 140f, 130f, 20f), BaseSettings.GetSettings.EspSettings.DrawOwnershipStakes, "Тотемы");
-
-                GUI.Label(new Rect(10f, 180f, 130f, 20f), $"Расстояние: {Math.Round(BaseSettings.GetSettings.EspSettings.Range)}м");
-                BaseSettings.GetSettings.EspSettings.Range = GUI.HorizontalSlider(new Rect(10, 200f, 130f, 20f), BaseSettings.GetSettings.EspSettings.Range, 100f, 500f);
+                GUI.color = Color.red;
+                GUI.Window(500000000, new Rect(40f, 100f, 380f, 500f), delegate
+            {
+                BaseSettings.GetSettings.EspSettings.DrawPlayers = GUI.Toggle        (new Rect(10f, 40f,  130f, 20f), BaseSettings.GetSettings.EspSettings.DrawPlayers, "Игроки");
+                BaseSettings.GetSettings.EspSettings.DrawWrecks = GUI.Toggle         (new Rect(10f, 60f, 130f, 20f), BaseSettings.GetSettings.EspSettings.DrawWrecks, "Машины");
+                BaseSettings.GetSettings.EspSettings.DrawOwnershipStakes = GUI.Toggle(new Rect(10f, 80f, 130f, 20f), BaseSettings.GetSettings.EspSettings.DrawOwnershipStakes, "Тотемы");
+                BaseSettings.GetSettings.EspSettings.StorageLocker = GUI.Toggle      (new Rect(10f, 100f, 130f, 20f), BaseSettings.GetSettings.EspSettings.StorageLocker, "Ящики");
+                BaseSettings.GetSettings.EspSettings.FirePit = GUI.Toggle            (new Rect(10f, 120f, 130f, 20f), BaseSettings.GetSettings.EspSettings.FirePit, "Жаровни");
 
 
-                //так проще
-                BaseSettings.GetSettings.AimBotSettings.IsEnabled = GUI.Toggle(new Rect(250f, 20, 130f, 20f), BaseSettings.GetSettings.AimBotSettings.IsEnabled, "Включить Аимбот");
-                BaseSettings.GetSettings.AimBotSettings.AimAtPlayers = GUI.Toggle(new Rect(250f, 40f, 130f, 20f), BaseSettings.GetSettings.AimBotSettings.AimAtPlayers, "Игроки");
-                BaseSettings.GetSettings.AimBotSettings.AimAtAnimals = GUI.Toggle(new Rect(250f, 60f, 130f, 20f), BaseSettings.GetSettings.AimBotSettings.AimAtAnimals, "Животные");
+                BaseSettings.GetSettings.EspSettings.LootCache = GUI.Toggle          (new Rect(10f, 140f, 130f, 20f), BaseSettings.GetSettings.EspSettings.LootCache, "Лут на рт");
+                BaseSettings.GetSettings.EspSettings.LogResourceNode = GUI.Toggle    (new Rect(10f, 160f, 130f, 20f), BaseSettings.GetSettings.EspSettings.LogResourceNode, "Дерево");
+                BaseSettings.GetSettings.EspSettings.FlintRock = GUI.Toggle          (new Rect(10f, 180f, 130f, 20f), BaseSettings.GetSettings.EspSettings.FlintRock, "Кремень");
+                BaseSettings.GetSettings.EspSettings.Metal2Resource = GUI.Toggle     (new Rect(10f, 200f, 130f, 20f), BaseSettings.GetSettings.EspSettings.Metal2Resource, "Краснуха");
+                BaseSettings.GetSettings.EspSettings.Metal4Resource = GUI.Toggle     (new Rect(10f, 220f, 130f, 20f), BaseSettings.GetSettings.EspSettings.Metal4Resource, "Синька");
+                BaseSettings.GetSettings.EspSettings.Metal3Resource = GUI.Toggle     (new Rect(10f, 240f, 130f, 20f), BaseSettings.GetSettings.EspSettings.Metal3Resource, "Зеленка");
+                BaseSettings.GetSettings.EspSettings.IronRockResource = GUI.Toggle   (new Rect(10f, 260f, 130f, 20f), BaseSettings.GetSettings.EspSettings.IronRockResource, "Железо");
+                BaseSettings.GetSettings.EspSettings.CoalRockResource = GUI.Toggle   (new Rect(10f, 280f, 130f, 20f), BaseSettings.GetSettings.EspSettings.CoalRockResource, "Уголь");
+                BaseSettings.GetSettings.EspSettings.SandstoneResource = GUI.Toggle  (new Rect(10f, 300f, 130f, 20f), BaseSettings.GetSettings.EspSettings.SandstoneResource, "Глина");
+                BaseSettings.GetSettings.EspSettings.AIShigiForest = GUI.Toggle      (new Rect(10f, 320f, 130f, 20f), BaseSettings.GetSettings.EspSettings.AIShigiForest, "Олени");
+                BaseSettings.GetSettings.EspSettings.AIBorProxy = GUI.Toggle         (new Rect(10f, 340f, 130f, 20f), BaseSettings.GetSettings.EspSettings.AIBorProxy, "Кабаны");
+                BaseSettings.GetSettings.EspSettings.AIShigiProxy = GUI.Toggle       (new Rect(10f, 360f, 130f, 20f), BaseSettings.GetSettings.EspSettings.AIShigiProxy, "Зайцы");
+                BaseSettings.GetSettings.EspSettings.AIYetiForest = GUI.Toggle       (new Rect(10f, 380f, 130f, 20f), BaseSettings.GetSettings.EspSettings.AIYetiForest, "Йети");
+                BaseSettings.GetSettings.EspSettings.AITokarProxy = GUI.Toggle       (new Rect(10f, 400f, 130f, 20f), BaseSettings.GetSettings.EspSettings.AITokarProxy, "Токар");
+                BaseSettings.GetSettings.EspSettings.WorkbenchDynamic = GUI.Toggle   (new Rect(10f, 420f, 130f, 20f), BaseSettings.GetSettings.EspSettings.WorkbenchDynamic, "Верстак");
+                BaseSettings.GetSettings.EspSettings.c4Dynamic = GUI.Toggle          (new Rect(10f, 440f, 130f, 20f), BaseSettings.GetSettings.EspSettings.c4Dynamic, "Цешка");
+                BaseSettings.GetSettings.EspSettings.SleeperLootCrate = GUI.Toggle   (new Rect(10f, 460f, 130f, 20f), BaseSettings.GetSettings.EspSettings.SleeperLootCrate, "Слиперы");
 
-            }, "By ddd, Unity");
+                // Aim
+                BaseSettings.GetSettings.AimBotSettings.AimAtPlayers = GUI.Toggle    (new Rect(250f, 40f, 130f, 20f), BaseSettings.GetSettings.AimBotSettings.AimAtPlayers, "Игроки");
+
+                // Text
+                GUI.color = Color.green;;
+                GUI.Label(new Rect(260f, 20f, 130f, 20f), "AimBot");
+
+                GUI.color = Color.green;
+                GUI.Label(new Rect(30f, 20f, 130f, 20f), "ESP");
+
+                GUI.color = Color.red;
+                GUI.Label(new Rect(10f, 480f, 130f, 20f), "Version 0.3");
+
+            }, "From Russia with Love");
+
+            }
 
         }
 
     }
-
-}

@@ -32,7 +32,7 @@ namespace hhax
 
         private static Settings GetDefault()
         {
-            return new Settings {ShowEspMenu = false, IsDebug = false, Friends = new List<string>(), EspSettings = new EspSettings {DrawLootCrates = false, Range = 300f, StructManLodDist = 0f,  DrawAnimals = false, DrawResouces = false, DrawPlayers = false, IsEnabled = false, DrawWrecks = false}, AimBotSettings = new AimBotSettings {IsEnabled = false, AimAtPlayers = false, AimAtAnimals = false, AimAtFriends = false}, EspMenuKeyCode = KeyCode.F5};
+            return new Settings {ShowEspMenu = false, EspSettings = new EspSettings {StructManLodDist = 0f, DrawPlayers = false, IsEnabled = true, DrawWrecks = false}, AimBotSettings = new AimBotSettings { IsEnabled = true, AimAtPlayers = false}};
         }
 
         public static void SaveSettings()
@@ -51,33 +51,44 @@ namespace hhax
     public class Settings
     {
         public bool ShowEspMenu { get; set; }
-        public bool IsDebug { get; set; } = true;
         public EspSettings EspSettings { get; set; } = new EspSettings();
         public AimBotSettings AimBotSettings { get; set; } = new AimBotSettings();
-        public List<string> Friends { get; set; } = new List<string>();
         public KeyCode EspMenuKeyCode { get; set; } = KeyCode.F5;
     }
 
     [Serializable]
     public class EspSettings
     {
-        public bool DrawResouces { get; set; }
-        public bool DrawAnimals { get; set; }
         public bool DrawOwnershipStakes { get; set; }
+        public bool StorageLocker { get; set; }
+        public bool FirePit { get; set; }
+        public bool LootCache { get; set; }
+        public bool LogResourceNode { get; set; }
+        public bool FlintRock { get; set; }
+        public bool Metal2Resource { get; set; }
+        public bool Metal3Resource { get; set; }
+        public bool Metal4Resource { get; set; }
+        public bool IronRockResource { get; set; }
+        public bool CoalRockResource { get; set; }
+        public bool SandstoneResource { get; set; }
+        public bool AIShigiForest { get; set; }
+        public bool AIBorProxy { get; set; }
+        public bool AIShigiProxy { get; set; }
+        public bool AIYetiForest { get; set; }
+        public bool AITokarProxy { get; set; }
+        public bool WorkbenchDynamic { get; set; }
+        public bool c4Dynamic { get; set; }
+        public bool SleeperLootCrate { get; set; }
         public bool DrawWrecks { get; set; }
-        public bool DrawLootCrates { get; set; }
         public bool DrawPlayers { get; set; }
         public bool IsEnabled { get; set; }
-        public float Range { get; set; } = 300f;
         public float StructManLodDist { get; set; } = 0f;
     }
 
     [Serializable]
     public class AimBotSettings
     {
-        public bool AimAtFriends { get; set; }
         public bool AimAtPlayers { get; set; }
-        public bool AimAtAnimals { get; set; }
         public bool IsEnabled { get; set; }
     }
 }

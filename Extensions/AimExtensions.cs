@@ -21,9 +21,8 @@ namespace hhax.Extensions
             foreach (var player in players)
             {
                 if (player == null) continue;
-                if (BaseSettings.GetSettings.Friends.Contains(player.GetProxyName())) continue;
                 var distance = Vector3.Distance(owner.transform.position, player.transform.position);
-                if (distance > BaseSettings.GetSettings.EspSettings.Range) continue;
+                if (distance > 500f) continue;
 
 
                 var distanceVec3 = Vector2.Distance(Input.mousePosition, Camera.main.WorldToScreenPoint(player.transform.position));

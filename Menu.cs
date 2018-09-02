@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections;
-using System.Collections.Generic;
-using System.Threading;
 using hhax.Extensions;
 using UnityEngine;
 
@@ -11,36 +9,27 @@ namespace hhax
     {
         public uLink.NetworkView[] NetworkView;
         private bool _frameAimKey;
-        public AnimalStatManagerClient[] Animals;
         public FPSInputController FpsInputController;
-        public HashSet<GenericDeviceUsableInterfaceClient> LootCrates = new HashSet<GenericDeviceUsableInterfaceClient>();
         public NetworkEntityManagerPlayerOwner ManagerPlayerOwner;
         public NetworkEntityManagerPlayerProxy[] Players;
-        public DestroyInTime[] ResourceNodes;
-        public HashSet<GenericDeviceUsableInterfaceClient> Stakes = new HashSet<GenericDeviceUsableInterfaceClient>();
         public NetworkEntityManagerPlayerProxy Target;
-        public GenericDeviceUsableInterfaceClient[] UsableItems;
-        public HashSet<GenericDeviceUsableInterfaceClient> Wrecks = new HashSet<GenericDeviceUsableInterfaceClient>();
 
 
         private void Start()
         {
             StartCoroutine(UpdateNetworkView());
-            //
             StartCoroutine(UpdatePlayers());
-            StartCoroutine(UpdateAnimals());
-            BaseSettings.GetSettings.IsDebug = true;
         }
 
         private void Update()
         {
             #region FindingObjects
 
-            if (ManagerPlayerOwner == null)
-                ManagerPlayerOwner = FindObjectOfType<NetworkEntityManagerPlayerOwner>();
+             if (ManagerPlayerOwner == null)
+                  ManagerPlayerOwner = FindObjectOfType<NetworkEntityManagerPlayerOwner>();
 
-            if (FpsInputController == null)
-                FpsInputController = FindObjectOfType<FPSInputController>();
+             if (FpsInputController == null)
+                  FpsInputController = FindObjectOfType<FPSInputController>();
 
             #endregion
 
@@ -70,7 +59,8 @@ namespace hhax
                 HuamnAimbot();
             }
         }
-        
+
+
 
         private void OnGUI()
         {
@@ -94,29 +84,54 @@ namespace hhax
                     }
                     if (BaseSettings.GetSettings.EspSettings.DrawPlayers && NetworkView != null)
                         DrawChunkNetworkView("PlayerProxy");
+                    if (BaseSettings.GetSettings.EspSettings.StorageLocker && NetworkView != null)
+                        DrawChunkNetworkView("StorageCrateDynamicConstructedProxy");
+                    if (BaseSettings.GetSettings.EspSettings.FirePit && NetworkView != null)
+                        DrawChunkNetworkView("FirepitDynamicConstructedProxy");
+                    if (BaseSettings.GetSettings.EspSettings.LootCache && NetworkView != null)
+                        DrawChunkNetworkView("LootCacheProxy");
+                    if (BaseSettings.GetSettings.EspSettings.LogResourceNode && NetworkView != null)
+                        DrawChunkNetworkView("LogResourceNode");
+                    if (BaseSettings.GetSettings.EspSettings.FlintRock && NetworkView != null)
+                        DrawChunkNetworkView("FlintRockResourceNode");
+                    if (BaseSettings.GetSettings.EspSettings.Metal2Resource && NetworkView != null)
+                        DrawChunkNetworkView("Metal2ResourceNode");
+                    if (BaseSettings.GetSettings.EspSettings.Metal3Resource && NetworkView != null)
+                        DrawChunkNetworkView("Metal3ResourceNode");
+                    if (BaseSettings.GetSettings.EspSettings.Metal4Resource && NetworkView != null)
+                        DrawChunkNetworkView("Metal4ResourceNode");
+                    if (BaseSettings.GetSettings.EspSettings.IronRockResource && NetworkView != null)
+                        DrawChunkNetworkView("IronRockResourceNode");
+                    if (BaseSettings.GetSettings.EspSettings.CoalRockResource && NetworkView != null)
+                        DrawChunkNetworkView("CoalRockResourceNode(Clone)");
+                    if (BaseSettings.GetSettings.EspSettings.SandstoneResource && NetworkView != null)
+                        DrawChunkNetworkView("SandstoneResourceNode(Clone)");
+                    if (BaseSettings.GetSettings.EspSettings.AIShigiForest && NetworkView != null)
+                        DrawChunkNetworkView("AIShigiForestProxy(Clone)");
+                    if (BaseSettings.GetSettings.EspSettings.AIBorProxy && NetworkView != null)
+                        DrawChunkNetworkView("AIBorProxy(Clone)");
+                    if (BaseSettings.GetSettings.EspSettings.AIShigiProxy && NetworkView != null)
+                        DrawChunkNetworkView("AIShigiProxy(Clone)");
+                    if (BaseSettings.GetSettings.EspSettings.AIYetiForest && NetworkView != null)
+                        DrawChunkNetworkView("AIYetiForestProxy(Clone)");
+                    if (BaseSettings.GetSettings.EspSettings.AITokarProxy && NetworkView != null)
+                        DrawChunkNetworkView("AITokarProxy(Clone)");
+                    if (BaseSettings.GetSettings.EspSettings.WorkbenchDynamic && NetworkView != null)
+                        DrawChunkNetworkView("WorkbenchDynamicConstructedProxy(Clone)");
+                    if (BaseSettings.GetSettings.EspSettings.c4Dynamic && NetworkView != null)
+                        DrawChunkNetworkView("C4DynamicObjectProxy(Clone)");
+                    if (BaseSettings.GetSettings.EspSettings.SleeperLootCrate && NetworkView != null)
+                        DrawChunkNetworkView("SleeperLootCrateProxy(Clone)");
                 }
 
 
                 if (Input.GetKey(KeyCode.LeftAlt))
                 {
-                    // вкл
                     SetStructLodDist(BaseSettings.GetSettings.EspSettings.StructManLodDist = 0);
-
-                    // Simple BunnyHop Don't work
-                   /* while (true)
-                    {
-                        if (Input.GetKey(KeyCode.Space))
-                        {
-                            SendKeys.Send("{space}");
-                        }
-                        Thread.Sleep(180);
-                    }
-                    */
                 }
 
                 if (Input.GetKey(KeyCode.RightAlt))
                 {
-                    // выкл
                     SetStructLodDist(BaseSettings.GetSettings.EspSettings.StructManLodDist = 600); 
                 }
 
@@ -144,11 +159,6 @@ namespace hhax
             }
         }
 
-        private int GetKeyState(char v)
-        {
-            throw new NotImplementedException();
-        }
-
         private void DrawChunkNetworkView(string chunk = "")
         {
             foreach (var nv in NetworkView)
@@ -166,7 +176,7 @@ namespace hhax
 
                     var distance = Vector3.Distance(ManagerPlayerOwner.transform.position, nv.transform.position);
 
-                    if (distance > BaseSettings.GetSettings.EspSettings.Range)
+                    if (distance > 500f)
                         continue;
 
                     var wtsPlayer = Camera.main.WorldToScreenPoint(nv.transform.position);
@@ -179,6 +189,91 @@ namespace hhax
                     {
                         shortName = "Тотем";
                         color = Color.black;
+                    }
+                    else if (nv.name == "StorageCrateDynamicConstructedProxy(Clone)")
+                    {
+                        shortName = "Ящик";
+                        color = Color.red;
+                    }
+                    else if (nv.name == "FirepitDynamicConstructedProxy(Clone)")
+                    {
+                        shortName = "Жаровня";
+                        color = Color.red;
+                    }
+                    else if (nv.name == "LootCacheProxy(Clone)")
+                    {
+                        shortName = "Лут";
+                        color = Color.red;
+                    }
+                    else if (nv.name == "LogResourceNode(Clone)")
+                    {
+                        shortName = "Дерево";
+                        color = Color.red;
+                    }
+                    else if (nv.name == "FlintRockResourceNode(Clone)")
+                    {
+                        shortName = "Кремень";
+                        color = Color.red;
+                    }
+                    else if (nv.name == "Metal2ResourceNode(Clone)")
+                    {
+                        shortName = "Краснуха";
+                        color = Color.red;
+                    }
+                    else if (nv.name == "Metal3ResourceNode(Clone)")
+                    {
+                        shortName = "Зеленка";
+                        color = Color.red;
+                    }
+                    else if (nv.name == "Metal4ResourceNode(Clone)")
+                    {
+                        shortName = "Синька";
+                        color = Color.red;
+                    }
+                    else if (nv.name == "IronRockResourceNode(Clone)")
+                    {
+                        shortName = "Железо";
+                        color = Color.red;
+                    }
+                    else if (nv.name == "CoalRockResourceNode(Clone)")
+                    {
+                        shortName = "Уголь";
+                        color = Color.red;
+                    }
+                    else if (nv.name == "SandstoneResourceNode(Clone)")
+                    {
+                        shortName = "Глина";
+                        color = Color.red;
+                    }
+                    else if (nv.name == "AIShigiForestProxy(Clone)")
+                    {
+                        shortName = "Олень";
+                        color = Color.red;
+                    }
+                    else if (nv.name == "AIBorProxy(Clone)")
+                    {
+                        shortName = "Кабан";
+                        color = Color.red;
+                    }
+                    else if (nv.name == "AIBorProxy(Clone)")
+                    {
+                        shortName = "Кабан";
+                        color = Color.red;
+                    }
+                    else if (nv.name == "AIShigiProxy(Clone)")
+                    {
+                        shortName = "Заяц";
+                        color = Color.red;
+                    }
+                    else if (nv.name == "AIYetiForestProxy(Clone)")
+                    {
+                        shortName = "Йети";
+                        color = Color.red;
+                    }
+                    else if (nv.name == "AITokarProxy(Clone)")
+                    {
+                        shortName = "Токар";
+                        color = Color.red;
                     }
                     else if (nv.name == "RoachProxy(Clone)")
                     {
@@ -193,6 +288,21 @@ namespace hhax
                     else if (nv.name == "KangaProxy(Clone)")
                     {
                         shortName = "Канга";
+                        color = Color.red;
+                    }
+                    else if (nv.name == "WorkbenchDynamicConstructedProxy(Clone)")
+                    {
+                        shortName = "Верстак";
+                        color = Color.red;
+                    }
+                    else if (nv.name == "C4DynamicObjectProxy(Clone)")
+                    {
+                        shortName = "Цешка";
+                        color = Color.red;
+                    }
+                    else if (nv.name == "SleeperLootCrateProxy(Clone)")
+                    {
+                        shortName = "Слипер";
                         color = Color.red;
                     }
                     else if (nv.name.Contains("PlayerProxy"))
@@ -248,49 +358,10 @@ namespace hhax
             }
         }
 
-
-        private void UpdateCrates()
-        {
-            foreach (var crate in LootCrates)
-                if (crate.IsNullOrDestroyed())
-                    LootCrates.Remove(crate);
-
-
-            foreach (var item in UsableItems)
-            {
-                if (item == null) continue;
-                if (LootCrates.Contains(item)) continue;
-                if (item.name.ToLower().Contains("loot"))
-                    LootCrates.Add(item);
-            }
-        }
-
-        private void FindWrecks()
-        {
-            Wrecks.Clear();
-            foreach (var item in Wrecks)
-            {
-                if (item == null) continue;
-                if (item.name.ToLower().Contains("goat") || item.name.ToLower().Contains("roach") || item.name.ToLower().Contains("kanga")) Wrecks.Add(item);
-            }
-        }
-
-        private void FindStakes()
-        {
-            Stakes.Clear();
-            foreach (var stake in Stakes)
-            {
-                if (stake == null) continue;
-                if (stake.name.ToLower().Contains("ship")) Stakes.Add(stake);
-            }
-        }
-
         #region Whiles
 
         public IEnumerator UpdateNetworkView()
         {
-            if (BaseSettings.GetSettings.IsDebug)
-                Debug.Log("UpdateNetworkView is running");
             while (true)
             {
                 try
@@ -307,8 +378,6 @@ namespace hhax
 
         public IEnumerator UpdatePlayers()
         {
-            if (BaseSettings.GetSettings.IsDebug)
-                Debug.Log("UpdateManagerPlayerProxy is running");
             while (true)
             {
                 try
@@ -324,36 +393,17 @@ namespace hhax
             }
         }
 
-        public IEnumerator UpdateAnimals()
-        {
-            if (BaseSettings.GetSettings.IsDebug)
-                Debug.Log("UpdateAnimals is running");
-            while (true)
-            {
-                try
-                {
-                    if (BaseSettings.GetSettings.EspSettings.IsEnabled && BaseSettings.GetSettings.EspSettings.DrawAnimals)
-
-                        Animals = FindObjectsOfType<AnimalStatManagerClient>();
-                }
-                catch (Exception e)
-                {
-                    Debug.LogError("Exception in UpdateAnimals! " + e);
-                }
-                yield return new WaitForSeconds(5f);
-            }
-        }
-
         #endregion
 
         #region Draw
-
+        // Дальность прорисовки текстур
         private void SetStructLodDist(float Dist)
         {
             StructureManagerLod[] lods = UnityEngine.Object.FindObjectsOfType<StructureManagerLod>();
             foreach (StructureManagerLod lod in lods)
                 if (lod.isActiveAndEnabled) lod.LodDistance = Dist;
         }
+        
 
         private void EnableStructColliders() => DisableStructColliders(false);
         private void DisableStructColliders(bool disable = true)
@@ -364,13 +414,5 @@ namespace hhax
         }
 
         #endregion
-    }
-
-    internal class SendKeys
-    {
-        internal static void Send(string v)
-        {
-            throw new NotImplementedException();
-        }
     }
 }
